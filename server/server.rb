@@ -9,6 +9,34 @@ enable :sessions
 set :public_folder, '../client'
 set :views, settings.root + '/client/views'
 
+# Simplified error pipeline using a thread-safe queue
+error_pipeline = Queue.new
+
+# Medic class to handle errors
+class Medic
+  def initialize(pipeline)
+    @pipeline = pipeline
+    start_listening
+  end
+
+  def start_listening
+    Thread.new do
+      loop do
+        handle_error(@pipeline.pop)
+      end
+    end
+  end
+
+  def handle_error(error_data)
+    # Placeholder for error handling logic
+    puts "Medic handling error: #{error_data}"
+    # Add your error-handling logic here
+  end
+end
+
+# Create an instance of the Medic
+medic = Medic.new(error_pipeline)
+
 class User < ActiveRecord::Base
     has_secure_password
 end
