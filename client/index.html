@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat</title>
+    <script src="https://unpkg.com/htmx.org@1.6.1"></script>
+</head>
+<body>
+    <h1>Chat</h1>
+
+    <form id="messageForm" hx-post="/messages" hx-trigger="submit" hx-vals="{message: document.querySelector('input[name=message]').value}" hx-swap="none">
+        <input name="message" type="text">
+        <button type="submit">Send</button>
+    </form>
+
+    <div id="messages" hx-get="/messages" hx-trigger="every 1s" hx-swap="innerHTML" hx-push-url="false">
+        <!-- Messages will be displayed here -->
+    </div>
+
+    <script>
+        htmx.on('htmx:afterRequest', function(event) {
+            if (event.detail.xhr.status === 500) {
+                var error = JSON.parse(event.detail.xhr.responseText).error;
+                alert(error);
+            }
+            });
+
+        htmx.on('htmx:afterOnLoad', function(event) {
+            var messagesDiv = document.getElementById('messages');
+            var messages = JSON.parse(event.detail.xhr.responseText);
+            messagesDiv.innerHTML = messages.map(function(message) {
+                return '<p>' + message.text + ' <small>(' + message.time + ')</small></p>';
+            }).join('');
+        });
+    </script>
+</body>
+</html>
