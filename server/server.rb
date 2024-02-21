@@ -28,9 +28,8 @@ class Medic
   end
 
   def handle_error(error_data)
-    # Placeholder for error handling logic
     puts "Medic handling error: #{error_data}"
-    # Add your error-handling logic here
+    # TDO:error-handling logic
   end
 end
 
